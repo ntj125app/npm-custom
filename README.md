@@ -6,3 +6,7 @@ This repo use NPM Alpine base image and install git and Ionic globally
 
 # LICENSE
 License can be read in [LICENSE](https://github.com/ntj125app/npm-custom/blob/latest/LICENSE)
+
+# UPDATE
+
+09 Mar 2024 - Updated repo
