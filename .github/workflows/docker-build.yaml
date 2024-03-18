@@ -20,7 +20,21 @@ env:
   IMAGE_NAME2: ${{ secrets.DOCKERHUB_REPO }}
 
 jobs:
+  cleanup-untagged-images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Delete all containers from package without tags
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ vars.IMAGE_NAME }}
+          package-type: container
+          delete-only-untagged-versions: true
+
   build-packages:
+    needs: cleanup-untagged-images
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
@@ -92,18 +106,3 @@ jobs:
           labels: ${{ steps.meta-packages.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  cleanup-untagged-images:
-    needs: build-packages
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Delete all containers from package without tags
-        uses: actions/delete-package-versions@v5
-        with:
-          package-name: ${{ vars.IMAGE_NAME }}
-          package-type: container
-          delete-only-untagged-versions: true
-          min-versions-to-keep: 0
